@@ -1,46 +1,47 @@
 use std::io;
 
-const GBP_PER_USD: f32 = 0.9;
 
 fn main() {
     println!("Program for converting GBP to USD.");
-    let from_curr = read_from_curr();
-    let amount = read_amount();
-    if from_curr == "GBP" {
-        println!("{} USD", amount / GBP_PER_USD)
-    } else {
-        println!("{} GBP", amount * GBP_PER_USD)
-    }
+    let conversion = prompt_for_conversion();
+    let amount = prompt_for_amount();
+    println!("{}{:.2} is {}{:.2}", conversion.from, amount, conversion.to, amount * conversion.multiplier)
 }
 
-fn read_amount() -> f32 {
+fn prompt_for_amount() -> f32 {
     println!("How much do you want to convert?");
-    let mut amount = String::new();
     loop {
-        io::stdin()
-            .read_line(&mut amount)
-            .expect("Failed to read input");
-        
-        let amount: f32 = match amount.trim().parse() {
-            Ok(n) => n,
+        let mut amount = String::new();
+        io::stdin().read_line(&mut amount).expect("Failed to read input");
+        match amount.trim().parse() {
+            Ok(n) => return n,
             Err(_) => {
                 println!("Must be a valid decimal number. Try again:");
                 continue
             }
         };
-        return amount;
     }
 }
 
-fn read_from_curr() -> String {
+const GBP_PER_USD: f32 = 0.9;
+struct Conversion {
+    from: char,
+    to: char,
+    multiplier: f32
+}
+
+fn prompt_for_conversion() -> Conversion {
     println!("Which currency do you have?");
-    let mut input = String::new();
     loop {
+        let mut input = String::new();
         io::stdin().read_line(&mut input).expect("Failed to read input");
-        let from_curr = input.trim();
-        if from_curr == "USD" || from_curr == "GBP" {
-            return from_curr.to_string()
+        match input.trim() {
+            "USD" => return Conversion { from: '$', to: '£', multiplier: GBP_PER_USD },
+            "GBP" => return Conversion { from: '£', to: '$', multiplier: 1f32/GBP_PER_USD },
+            _ => {
+                println!("Valid currencies are [USD, GBP]. Try again:");
+                continue
+            }
         }
-        println!("Valid currencies are [USD, GBP]. Try again:");
     }
 }
