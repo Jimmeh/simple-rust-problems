@@ -2,15 +2,36 @@ use std::io;
 
 fn main() {
     println!("Program that draws triangles to the console.");
+    let draw_fn = prompt_for_type();
     let length = prompt_for_length();
-    draw(length);
+    draw_fn(length);
 }
 
-fn draw(length: usize) {
-    println!("{}", "*".repeat(length));
-    if length > 1 {
-        draw(length - 1);
+fn draw_base_at_top(length: usize) {
+    for i in (1..length+1).rev() {
+        println!("{}", "*".repeat(i))
     }
+}
+
+fn draw_base_at_bottom(length: usize) {
+    for i in 1..length+1 {
+        println!("{}", "*".repeat(i))
+    }
+}
+
+fn prompt_for_type() -> fn(usize) {
+    loop {
+        println!("Select triangle type:");
+        println!("1: Base at top");
+        println!("2: Base at bottom");
+        let mut choice = String::new();
+        io::stdin().read_line(&mut choice).expect("Failed to read input");
+        match choice.trim() {
+            "1" => return draw_base_at_top,
+            "2" => return draw_base_at_bottom,
+            _ => continue
+        }
+    }    
 }
 
 fn prompt_for_length() -> usize {
