@@ -13,6 +13,14 @@ fn draw_base_at_top(length: usize) {
     }
 }
 
+fn draw_even_steps_skipped_base_at_bottom(length: usize) {
+    for i in 1..length+1 {
+        if i % 2 != 0 {
+            println!("{}", "*".repeat(i))
+        }
+    }
+}
+
 fn draw_base_at_bottom(length: usize) {
     for i in 1..length+1 {
         println!("{}", "*".repeat(i))
@@ -24,11 +32,13 @@ fn prompt_for_type() -> fn(usize) {
         println!("Select triangle type:");
         println!("1: Base at top");
         println!("2: Base at bottom");
+        println!("3: Even steps, base at bottom");
         let mut choice = String::new();
         io::stdin().read_line(&mut choice).expect("Failed to read input");
         match choice.trim() {
             "1" => return draw_base_at_top,
             "2" => return draw_base_at_bottom,
+            "3" => return draw_even_steps_skipped_base_at_bottom,
             _ => continue
         }
     }    
